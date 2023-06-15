@@ -1,8 +1,12 @@
 package com.project.employee.entity;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.project.employee.dto.EmployeeDto;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+
 import javax.persistence.*;
+import java.util.Optional;
 
 
 @Setter
@@ -11,6 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
+@DynamicInsert
 public class Employee {
 
     @Id
@@ -28,6 +33,12 @@ public class Employee {
 
     @Column(columnDefinition = "varchar(255) default 'India'")
     private String country;
+    @PrePersist
+    void prePersist(){
+        if(this.country == null || this.country == ""){
+            this.country = "India";
+        }
+    }
 
     public EmployeeDto toDto(Employee employee){
         return EmployeeDto.builder()
@@ -38,4 +49,5 @@ public class Employee {
                 .build();
     }
 
+    
 }
